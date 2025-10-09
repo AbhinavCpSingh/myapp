@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/AbhinavCpSingh/myapp.git', branch: 'main', credentialsId: 'github-token'
+                git url: 'https://github.com/AbhinavCpSingh/myapp.git', branch: 'main'
             }
         }
 
@@ -22,13 +22,11 @@ pipeline {
         stage('Security Scan') {
             steps {
                 echo 'Running Trivy scan...'
-                // ✅ Windows-compatible Trivy scan using Docker
                 bat 'docker run --rm -v %cd%:/app aquasec/trivy image abhinavcpsingh/myapp:latest'
             }
         }
 
         stage('Push to Docker Hub') {
-            when { expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') } }
             steps {
                 echo 'Pushing Docker image to Docker Hub...'
                 bat '''
